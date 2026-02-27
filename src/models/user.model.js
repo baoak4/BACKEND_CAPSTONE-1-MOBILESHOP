@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ['user', 'admin'],
+            enum: ['user', 'admin', 'shop'],
             default: "user"
         },
         age: {
@@ -28,6 +28,30 @@ const userSchema = new mongoose.Schema(
             min: 1,
             max: 120
         },
+        phoneNumber: {
+            type: String,
+        },
+        avatar: {
+            type: String,
+        },
+        shippingAddress: [
+            {
+                street: { type: String, require: true },
+                city: { type: String, require: true },
+                district: { type: String, require: true },
+                ward: { type: String, require: true },
+            },
+        ],
+
+        favouriteProducts: [
+            { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        ],
+
+        isActive: {
+            type: Boolean,
+            default: true,
+        },
+
     },
     { timestamps: true }
 )
