@@ -2,16 +2,20 @@ const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema(
     {
-        name: { type: String, require: true, trim: true },
+        name: { type: String, required: true, trim: true },
         brand: { type: String, default: null, trim: true },
         price: { type: Number, required: true },
         productModel: { type: String, default: null, trim: true },
         description: { type: String, default: null },
+
         // Foreign keys
-        categories: { type: Schema.Types.ObjectId, ref: "Category", required: true },
-        reviews: { type: Schema.Types.ObjectId, ref: "Review", default: null },
-        variants: [{ type: Schema.Types.ObjectId, ref: "Variant" }],
-        // Foreign keys
+        categories: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+        reviews: { type: mongoose.Schema.Types.ObjectId, ref: "Review", default: null },
+        variants: [{ type: mongoose.Schema.Types.ObjectId, ref: "Variant" }],
+
+        // Images
+        images: [{ type: String, trim: true }],
+
         os: { type: String, default: null, trim: true },
         chipset: { type: String, default: null, trim: true },
         screen: { type: String, default: null },
