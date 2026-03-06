@@ -1,5 +1,5 @@
 const userModel = require("../models/user.model");
-const { verifyAccessToken } = require("../utils/jwt.util");
+const { verifyAccessToken } = require("../utils/jwt");
 
 const authMiddleware = async (req, res, next) => {
     try {
@@ -9,12 +9,15 @@ const authMiddleware = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
+        console.log('token')
         const decoded = verifyAccessToken(token);
 
         const user = await userModel.findById(decoded.userId);
+        console.log('user', user)
         if (!user) return res.status(401).json({ message: "User not found" });
 
-        req.user = { userId: user._id, role: user.role, email: user.email, name: user.name };
+        req.user = { userId: user._id, role: user.role };
+        // console.log('req.user', req.user)
         next();
     } catch (err) {
         return res.status(401).json({ message: "Unauthorized" });

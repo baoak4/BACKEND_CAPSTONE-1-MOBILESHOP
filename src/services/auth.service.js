@@ -15,7 +15,10 @@ class AuthService {
         const isMatch = await user.comparePassword(userData.password);
         if (!isMatch) { throwError("Password not compare"); }
 
-        const token = signAccessToken({ id: user._id, email: user.email });
+        const token = signAccessToken({
+            userId: user._id,
+            email: user.email
+        });
         return { user, token };
     }
 }
