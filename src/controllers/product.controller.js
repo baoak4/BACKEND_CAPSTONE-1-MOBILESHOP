@@ -16,8 +16,9 @@ class ProductController {
 
     async getListProducts(req, res, next) {
         try {
-            const result = await productService.getListProducts();
-            return res.status(201).json({ message: "Product retrieved successfully", data: result });
+            const params = { ...req.query, ...(req.body || {}) };
+            const result = await productService.getListProducts(params);
+            return res.status(200).json({ message: "Product retrieved successfully", ...result });
         } catch (error) {
             next(error);
         }
