@@ -3,20 +3,20 @@ const mongoose = require('mongoose');
 const reviewSchema = new mongoose.Schema(
     {
         productId: {
-            type: Schema.Type.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Product",
-            require: true,
+            required: true,
         },
 
         userId: {
-            type: Schema.Type.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            require: true,
+            required: true,
         },
 
         rating: {
             type: Number,
-            require: true,
+            required: true,
             min: 1,
             max: 5,
         },

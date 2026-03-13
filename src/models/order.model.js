@@ -1,9 +1,6 @@
-const { logger } = require("@/server");
 const mongoose = require("mongoose");
-
 const { Schema } = mongoose;
 
-// viết thẳng enum trong model (JS)
 const EOrderStatus = {
     PROCESSING: "PROCESSING",
     SHIPPING: "SHIPPING",
@@ -17,8 +14,9 @@ const EPaymentStatus = {
 };
 
 const EPaymentMethod = {
-    CAST: "CAST",
+    CASH: "CASH",
     BANK_TRANSFER: "BANK_TRANSFER",
+    STRIPE: "STRIPE",
 };
 
 const EOrderReviewed = {
@@ -67,7 +65,13 @@ const orderSchema = new Schema(
         paymentMethod: {
             type: String,
             enum: Object.values(EPaymentMethod),
-            default: EPaymentMethod.CAST,
+            default: EPaymentMethod.CASH,
+        },
+
+        stripePaymentIntentId: {
+            type: String,
+            default: null,
+            trim: true,
         },
 
         shippingAddress: {
@@ -103,4 +107,9 @@ const orderSchema = new Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
+module.exports = Order;
+module.exports.EOrderStatus = EOrderStatus;
+module.exports.EPaymentStatus = EPaymentStatus;
+module.exports.EPaymentMethod = EPaymentMethod;
+module.exports.EOrderReviewed = EOrderReviewed;
