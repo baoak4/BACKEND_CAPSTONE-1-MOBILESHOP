@@ -6,6 +6,7 @@ const authRoutes = require('./routes/auth.routes');
 const uploadRoutes = require('./routes/upload.routes');
 const categoryRoutes = require('./routes/category.routes');
 const productRoutes = require('./routes/product.routes');
+const reviewRoutes = require('./routes/review.routes');
 //middleware for handling errors
 
 const errorHandler = require('./middlewares/errorHandler');
@@ -22,6 +23,8 @@ app.use('/api/uploads', uploadRoutes);
 app.use('/api/categories', categoryRoutes);
 
 app.use('/api/products', productRoutes);
+
+app.use('/api/reviews', reviewRoutes);
 
 app.use(errorHandler);
 
