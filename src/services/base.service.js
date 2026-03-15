@@ -19,20 +19,34 @@ class BaseService {
         return num === -1 || num === 1 ? num : null;
     }
 
-    static async findPaginated(Model, filter, sort, { page, limit, skip }) {
+    static async findPaginated(Model, filter, sort, { page, limit, skip }, options = {}) {
+        const paginationResult = (data, total) => ({
+            data,
+            pagination: { total, page, limit, totalPages: Math.ceil(total / limit) || 0 },
+        });
+
+        if (options.lookup) {
+            const pipe = [
+                { $match: filter },
+                { $sort: sort },
+                { $skip: skip },
+                { $limit: limit },
+                { $lookup: options.lookup },
+            ];
+            const [data, total] = await Promise.all([
+                Model.aggregate(pipe).exec(),
+                Model.countDocuments(filter),
+            ]);
+            return paginationResult(data, total);
+        }
+
+        let query = Model.find(filter).sort(sort).skip(skip).limit(limit);
+        if (options.populate) query = query.populate(options.populate);
         const [data, total] = await Promise.all([
-            Model.find(filter).sort(sort).skip(skip).limit(limit).lean(),
+            query.lean(),
             Model.countDocuments(filter),
         ]);
-        return {
-            data,
-            pagination: {
-                total,
-                page,
-                limit,
-                totalPages: Math.ceil(total / limit) || 0,
-            },
-        };
+        return paginationResult(data, total);
     }
 }
 

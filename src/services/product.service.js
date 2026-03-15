@@ -7,35 +7,24 @@ class ProductService {
         return productModel.create({ ...product, user: userId });
     }
 
-    /**
-     * Lấy danh sách sản phẩm với search, filter, pagination, sort.
-     * Body (tất cả optional): search, page, limit, sort_by, sort_by_price, category_type, user
-     */
+    /** Danh sách sản phẩm (search, filter, pagination, sort) + reviews lookup theo productId. */
     async getListProducts(body = {}) {
         const filter = {};
-
-        if (body.search && String(body.search).trim()) {
-            filter.name = { $regex: String(body.search).trim(), $options: "i" };
-        }
-
-        if (body.category_type) {
-            filter.categories = body.category_type;
-        }
-
-        if (body.user) {
-            filter.user = body.user;
-        }
+        if (body.search != null && String(body.search).trim()) filter.name = { $regex: String(body.search).trim(), $options: "i" };
+        if (body.category_type) filter.categories = body.category_type;
+        if (body.user) filter.user = body.user;
 
         const { page, limit, skip } = BaseService.parsePagination(body);
-
         const sort = {};
-        const sortBy = BaseService.parseSortDirection(body?.sort_by);
         const sortByPrice = BaseService.parseSortDirection(body?.sort_by_price);
+        const sortBy = BaseService.parseSortDirection(body?.sort_by);
         if (sortByPrice != null) sort.price = sortByPrice;
         if (sortBy != null) sort.createdAt = sortBy;
         if (Object.keys(sort).length === 0) sort.createdAt = -1;
 
-        return BaseService.findPaginated(productModel, filter, sort, { page, limit, skip });
+        return BaseService.findPaginated(productModel, filter, sort, { page, limit, skip }, {
+            lookup: { from: "reviews", localField: "_id", foreignField: "productId", as: "reviews" },
+        });
     }
 
     async getProductById(productId) {
