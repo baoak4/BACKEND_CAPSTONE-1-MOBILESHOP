@@ -1,0 +1,33 @@
+const userModel = require("../models/user.model");
+const { verifyAccessToken } = require("../utils/jwt");
+
+const authMiddleware = async (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ message: "Missing or invalid Authorization header" });
+        }
+
+        const token = authHeader.split(" ")[1];
+        // console.log('token')
+        const decoded = verifyAccessToken(token);
+
+        const user = await userModel.findById(decoded.userId);
+        // console.log('user', user)
+        if (!user) return res.status(401).json({ message: "User not found" });
+
+        // user: object - userId = req.user.userId , role = req.user.role
+        req.user = {
+            userId: user._id,
+            role: user.role
+        };
+        // req.user.userId
+        // req.user.role
+        // console.log('req.user', req.user)
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+};
+
+module.exports = authMiddleware;
