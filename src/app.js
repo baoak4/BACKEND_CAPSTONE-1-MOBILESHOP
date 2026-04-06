@@ -13,6 +13,7 @@ const cartRoutes = require('./routes/cart.routes');
 const contentRoutes = require('./routes/content.routes');
 const orderRoutes = require('./routes/order.routes');
 const configRoutes = require('./routes/config.routes');
+const statsRoutes = require('./routes/stats.routes');
 
 //middleware for handling errors
 
@@ -58,6 +59,8 @@ app.use('/api/contents', contentRoutes);
 app.use('/api/orders', orderRoutes);
 
 app.use('/api/config', configRoutes);
+
+app.use('/api/stats', statsRoutes);
 
 app.use(errorHandler);
 
