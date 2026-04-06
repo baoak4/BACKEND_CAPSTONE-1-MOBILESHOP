@@ -6,9 +6,6 @@ const authMiddleware = require('../middlewares/auth.middlewars');
 const authorizeRoles = require('../middlewares/authorize.middleware');
 const router = express.Router();
 
-// Public route - Stripe webhook (no auth needed)
-router.post('/webhook', orderController.stripeWebhook);
-
 // router.use(authMiddleware);
 // router.use(authorizeRoles('user', 'admin', 'shop'));
 
@@ -21,9 +18,16 @@ router.post(
 
 router.post(
     '/createStripePaymentIntent',
-    // orderValidator.createStripePaymentIntentValidator,
+    orderValidator.createStripePaymentIntentValidator,
     validate,
     orderController.createStripePaymentIntent
+);
+
+router.post(
+    '/syncStripePaymentIntent',
+    orderValidator.syncStripePaymentIntentValidator,
+    validate,
+    orderController.syncStripePaymentIntent
 );
 
 router.get(

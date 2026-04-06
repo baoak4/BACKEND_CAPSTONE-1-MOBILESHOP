@@ -72,6 +72,8 @@ const orderSchema = new Schema(
             type: String,
             default: null,
             trim: true,
+            sparse: true,
+            index: true,
         },
 
         shippingAddress: {

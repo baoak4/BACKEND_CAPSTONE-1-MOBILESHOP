@@ -1,4 +1,16 @@
 const orderService = require('../services/order.service');
+const paymentService = require('../services/payment.service');
+
+function parseWebhookPayload(req) {
+    if (Buffer.isBuffer(req.body)) {
+        try {
+            return JSON.parse(req.body.toString('utf8'));
+        } catch {
+            return null;
+        }
+    }
+    return req.body;
+}
 
 class OrderController {
     async createOrder(req, res, next) {
@@ -12,8 +24,8 @@ class OrderController {
 
     async createStripePaymentIntent(req, res, next) {
         try {
-            const { orderId, amount, currency } = req.body;
-            const result = await orderService.createStripePaymentIntent(orderId, amount, currency);
+            const { orderId, currency } = req.body;
+            const result = await paymentService.getOrReusePaymentIntent(orderId, { currency });
             return res.status(200).json({
                 message: 'Tạo phiên thanh toán Stripe thành công',
                 data: result,
@@ -23,48 +35,41 @@ class OrderController {
         }
     }
 
+    async syncStripePaymentIntent(req, res, next) {
+        try {
+            const { paymentIntentId } = req.body;
+            const auth = req.user || null;
+            const order = await paymentService.syncPaidFromPaymentIntentId(paymentIntentId, auth);
+            return res.status(200).json({
+                message: 'Đồng bộ thanh toán thành công',
+                data: order,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async stripeWebhook(req, res, next) {
         try {
-            const sig = req.headers['stripe-signature'];
-            const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-            // For testing without STRIPE_WEBHOOK_SECRET, accept webhook
-            if (!webhookSecret) {
-                console.log('⚠️ STRIPE_WEBHOOK_SECRET not set - accepting webhook anyway for testing');
-                const paymentIntent = req.body.data?.object;
-                if (paymentIntent && req.body.type === 'payment_intent.succeeded') {
-                    try {
-                        await orderService.handleStripeWebhook(paymentIntent.id);
-                        console.log('✅ Payment webhook processed:', paymentIntent.id);
-                    } catch (e) {
-                        console.error('❌ handleStripeWebhook error', e);
-                    }
-                }
-                return res.status(200).json({ received: true });
+            const payload = parseWebhookPayload(req);
+            if (!payload || typeof payload !== 'object') {
+                return res.status(400).send('Payload webhook không hợp lệ');
             }
 
-            // Production mode - verify signature
-            if (!sig) {
-                return res.status(400).send('Thiếu stripe-signature');
-            }
+            const event = {
+                type: payload.type,
+                data: { object: payload.data?.object },
+            };
 
-            let event;
             try {
-                const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
-                event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-            } catch (err) {
-                return res.status(400).send(`Webhook Error: ${err.message}`);
+                await paymentService.processWebhookEvent(event);
+                if (payload.type === 'payment_intent.succeeded' && payload.data?.object?.id) {
+                    console.log('Payment webhook processed:', payload.data.object.id);
+                }
+            } catch (e) {
+                console.error('processWebhookEvent', e);
             }
 
-            if (event.type === 'payment_intent.succeeded') {
-                const paymentIntent = event.data.object;
-                try {
-                    await orderService.handleStripeWebhook(paymentIntent.id);
-                    console.log('✅ Payment webhook processed:', paymentIntent.id);
-                } catch (e) {
-                    console.error('❌ handleStripeWebhook error', e);
-                }
-            }
             return res.status(200).json({ received: true });
         } catch (error) {
             console.error('Webhook error:', error);

@@ -38,12 +38,17 @@ class OrderValidator {
             .notEmpty().withMessage('orderId là bắt buộc')
             .bail()
             .isMongoId().withMessage('orderId không hợp lệ'),
-        body('amount')
-            .notEmpty().withMessage('amount là bắt buộc')
-            .isFloat({ min: 0.01 }).withMessage('amount phải > 0'),
         body('currency')
             .optional()
             .isIn(['usd', 'vnd']).withMessage('currency chỉ nhận: usd, vnd'),
+    ];
+
+    syncStripePaymentIntentValidator = [
+        body('paymentIntentId')
+            .notEmpty().withMessage('paymentIntentId là bắt buộc')
+            .bail()
+            .matches(/^pi_[a-zA-Z0-9]+$/)
+            .withMessage('paymentIntentId không hợp lệ'),
     ];
 
     getOrderByIdValidator = [

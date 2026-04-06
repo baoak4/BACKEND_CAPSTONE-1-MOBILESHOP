@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stripe sandbox — Payment Intent</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    :root {
+      font-family: system-ui, sans-serif;
+      --bg: #0f1419;
+      --card: #1a2332;
+      --text: #e7ecf3;
+      --muted: #8b9bb4;
+      --accent: #5b8def;
+      --err: #f87171;
+      --ok: #4ade80;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    main {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+    h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+    p.sub { color: var(--muted); font-size: 0.875rem; margin: 0 0 1.25rem; }
+    section {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    input, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: 1px solid #2d3a4f;
+      background: #121a26;
+      color: var(--text);
+      padding: 0.5rem 0.65rem;
+      margin-bottom: 0.75rem;
+    }
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      border: none;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary {
+      background: #2d3a4f;
+      color: var(--text);
+    }
+    #payment-element {
+      margin: 0.75rem 0;
+      padding: 0.5rem 0;
+    }
+    .log {
+      font-family: ui-monospace, monospace;
+      font-size: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background: #121a26;
+      border-radius: 8px;
+      padding: 0.75rem;
+      max-height: 200px;
+      overflow: auto;
+      color: var(--muted);
+    }
+    .log.ok { color: var(--ok); }
+    .log.err { color: var(--err); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Thanh toán Stripe (sandbox)</h1>
+    <p class="sub">
+      Mở qua server: <code>http://localhost:PORT/test-stripe-order.html</code> — cùng origin với API để tránh CORS.
+    </p>
+
+    <section>
+      <label>API base URL</label>
+      <input id="apiBase" type="url" value="http://localhost:3000" autocomplete="off" />
+
+      <div class="row">
+        <div>
+          <label>userId (MongoDB)</label>
+          <input id="userId" placeholder="507f1f77bcf86cd799439011" />
+        </div>
+        <div>
+          <label>productId</label>
+          <input id="productId" placeholder="507f191e810c19729de860ea" />
+        </div>
+      </div>
+
+      <label>SKU</label>
+      <input id="sku" value="DEMO-SKU" />
+
+      <div class="row">
+        <div>
+          <label>Số lượng</label>
+          <input id="qty" type="number" min="1" value="1" />
+        </div>
+        <div>
+          <label>totalAmount (VND)</label>
+          <input id="totalAmount" type="number" min="1" value="50000" />
+        </div>
+      </div>
+
+      <label>Số điện thoại</label>
+      <input id="phone" value="0900000000" />
+
+      <label>Địa chỉ — street / city / district / ward</label>
+      <input id="street" value="1 Đường thử" />
+      <div class="row">
+        <input id="city" value="TP.HCM" placeholder="city" />
+        <input id="district" value="Quận 1" placeholder="district" />
+      </div>
+      <input id="ward" value="Phường Bến Nghé" placeholder="ward" />
+
+      <button type="button" class="secondary" id="btnLoadProducts">Tải sản phẩm (API)</button>
+      <button type="button" id="btnCreateOrder">1. Tạo đơn hàng</button>
+      <button type="button" id="btnPay" disabled>2. Tạo Payment Intent &amp; thanh toán</button>
+    </section>
+
+    <section id="paySection" style="display: none;">
+      <p class="sub" style="margin:0 0 0.5rem;">Nhập thẻ test: <code>4242 4242 4242 4242</code>, bất kỳ CVC / tương lai.</p>
+      <div id="payment-element"></div>
+      <button type="button" id="btnConfirm" disabled>3. Xác nhận thanh toán</button>
+    </section>
+
+    <section>
+      <label>Nhật ký</label>
+      <div id="log" class="log"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const $ = (id) => document.getElementById(id);
+      const logEl = $('log');
+      let stripe = null;
+      let elements = null;
+      let clientSecret = null;
+      let paymentIntentId = null;
+      let orderId = null;
+
+      function log(msg, cls) {
+        const line = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+        logEl.className = 'log' + (cls ? ' ' + cls : '');
+        logEl.textContent = line + '\n\n' + logEl.textContent.slice(0, 4000);
+      }
+
+      function apiBase() {
+        return $('apiBase').value.replace(/\/$/, '');
+      }
+
+      async function api(path, { method = 'GET', body } = {}) {
+        const url = apiBase() + path;
+        const opts = {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+        };
+        if (body !== undefined) opts.body = JSON.stringify(body);
+        const res = await fetch(url, opts);
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = { message: text || res.statusText };
+        }
+        if (!res.ok) {
+          const msg = data.message || data.error || res.statusText;
+          const err = new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+          err.status = res.status;
+          err.data = data;
+          throw err;
+        }
+        return data;
+      }
+
+      $('btnLoadProducts').onclick = async () => {
+        try {
+          const out = await api('/api/products/getListProducts', {
+            method: 'POST',
+            body: { page: 1, limit: 20 },
+          });
+          const list = out.data || out.products || [];
+          const first = Array.isArray(list) ? list[0] : null;
+          if (!first || !first._id) {
+            log('Không có sản phẩm trong response. Nhập tay productId + sku.', 'err');
+            return;
+          }
+          $('productId').value = first._id;
+          const v = first.variants && first.variants[0];
+          $('sku').value = (v && v.sku) || first.sku || 'SKU';
+          log('Đã chọn sản phẩm: ' + (first.name || first._id), 'ok');
+        } catch (e) {
+          log('Lỗi tải sản phẩm: ' + e.message, 'err');
+        }
+      };
+
+      $('btnCreateOrder').onclick = async () => {
+        $('btnPay').disabled = true;
+        orderId = null;
+        try {
+          const uid = $('userId').value.trim();
+          const pid = $('productId').value.trim();
+          if (!uid || !pid) {
+            log('Cần userId và productId hợp lệ.', 'err');
+            return;
+          }
+          const payload = {
+            userId: uid,
+            phoneNumber: $('phone').value.trim(),
+            items: [
+              {
+                productId: pid,
+                sku: $('sku').value.trim() || 'SKU',
+                quantity: Math.max(1, parseInt($('qty').value, 10) || 1),
+              },
+            ],
+            totalAmount: Math.max(1, parseInt($('totalAmount').value, 10) || 0),
+            paymentMethod: 'STRIPE',
+            shippingAddress: {
+              street: $('street').value.trim(),
+              city: $('city').value.trim(),
+              district: $('district').value.trim(),
+              ward: $('ward').value.trim(),
+            },
+          };
+          const res = await api('/api/orders/create', { method: 'POST', body: payload });
+          orderId = res.data && res.data._id;
+          if (!orderId) {
+            log('Response không có data._id', 'err');
+            return;
+          }
+          log('Đơn hàng: ' + orderId + '\ntotalAmount server: ' + res.data.totalAmount, 'ok');
+          $('btnPay').disabled = false;
+          resetPaymentUi();
+        } catch (e) {
+          log('Tạo đơn: ' + e.message, 'err');
+        }
+      };
+
+      function resetPaymentUi() {
+        $('paySection').style.display = 'none';
+        $('btnConfirm').disabled = true;
+        $('payment-element').innerHTML = '';
+        clientSecret = null;
+        paymentIntentId = null;
+        elements = null;
+      }
+
+      $('btnPay').onclick = async () => {
+        if (!orderId) return;
+        resetPaymentUi();
+        try {
+          const keyRes = await api('/api/config/stripe-public-key');
+          const pk = keyRes.stripePublicKey;
+          if (!pk || !pk.startsWith('pk_')) {
+            log('Thiếu STRIPE_PUBLIC_KEY trên server (.env + key.js).', 'err');
+            return;
+          }
+
+          const piRes = await api('/api/orders/createStripePaymentIntent', {
+            method: 'POST',
+            body: { orderId, currency: 'vnd' },
+          });
+          const d = piRes.data || {};
+          if (d.alreadySucceeded) {
+            log('Payment Intent đã succeeded. Đồng bộ…', 'ok');
+            if (d.paymentIntentId) {
+              await syncPayment(d.paymentIntentId);
+            }
+            return;
+          }
+          clientSecret = d.clientSecret;
+          paymentIntentId = d.paymentIntentId;
+          if (!clientSecret) {
+            log('API không trả clientSecret: ' + JSON.stringify(d), 'err');
+            return;
+          }
+
+          stripe = Stripe(pk);
+          elements = stripe.elements({ clientSecret });
+          const paymentElement = elements.create('payment');
+          $('payment-element').innerHTML = '';
+          paymentElement.mount('#payment-element');
+          $('paySection').style.display = 'block';
+          $('btnConfirm').disabled = false;
+          log('Đã tạo PI: ' + paymentIntentId, 'ok');
+        } catch (e) {
+          log('Payment Intent: ' + e.message, 'err');
+        }
+      };
+
+      async function syncPayment(piId) {
+        try {
+          const s = await api('/api/orders/syncStripePaymentIntent', {
+            method: 'POST',
+            body: { paymentIntentId: piId },
+          });
+          log('Đồng bộ OK — paymentStatus: ' + (s.data && s.data.paymentStatus), 'ok');
+        } catch (e) {
+          log('Sync: ' + e.message + ' (webhook có thể đã cập nhật đơn)', 'err');
+        }
+      }
+
+      $('btnConfirm').onclick = async () => {
+        if (!stripe || !elements || !clientSecret) return;
+        $('btnConfirm').disabled = true;
+        try {
+          const returnUrl = window.location.href.split('#')[0];
+          const { error, paymentIntent } = await stripe.confirmPayment({
+            elements,
+            confirmParams: { return_url: returnUrl },
+            redirect: 'if_required',
+          });
+          if (error) {
+            log('Stripe: ' + error.message, 'err');
+            $('btnConfirm').disabled = false;
+            return;
+          }
+          if (paymentIntent && paymentIntent.status === 'succeeded') {
+            log('Thanh toán thành công (client): ' + paymentIntent.id, 'ok');
+            await syncPayment(paymentIntent.id);
+          } else {
+            log('Trạng thái: ' + (paymentIntent && paymentIntent.status), 'ok');
+          }
+        } catch (e) {
+          log('confirmPayment: ' + e.message, 'err');
+          $('btnConfirm').disabled = false;
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

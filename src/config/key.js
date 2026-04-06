@@ -6,7 +6,8 @@ const KEY = {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || 'dwfzptm5v',
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '134838427692594',
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || 'ZLQkvDyyA_bI8kazbqUvQp_fcnU',
-    'STRIPE_PRIVATE_KEY': process.env.STRIPE_PRIVATE_KEY
+    STRIPE_PRIVATE_KEY: process.env.STRIPE_PRIVATE_KEY,
+    STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || '',
 };
 
 module.exports = KEY;

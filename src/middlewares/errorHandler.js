@@ -1,3 +1,4 @@
 module.exports = (err, req, res, next) => {
-    res.status(err.status || 500).json({ message : err.message || "Internal Server Error" });
+    const code = err.status || err.statusCode || 500;
+    res.status(code).json({ message: err.message || 'Internal Server Error' });
 };

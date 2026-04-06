@@ -1,6 +1,4 @@
-const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 const orderModel = require('../models/order.model');
-const throwError = require('../utils/throwError');
 const { EOrderStatus, EPaymentStatus } = orderModel;
 
 function generateTrackingNumber() {
@@ -15,44 +13,6 @@ class OrderService {
             paymentStatus: EPaymentStatus.UNPAID,
         };
         return orderModel.create(payload);
-    }
-
-    async createStripePaymentIntent(orderId, amount, currency = 'vnd') {
-        if (!process.env.STRIPE_PRIVATE_KEY) {
-            throwError('Stripe không được cấu hình (STRIPE_PRIVATE_KEY)');
-        }
-        const order = await orderModel.findById(orderId).lean();
-        if (!order) throwError('Không tìm thấy đơn hàng');
-        if (order.paymentStatus === EPaymentStatus.PAID) {
-            throwError('Đơn hàng đã thanh toán');
-        }
-        const amountInSmallestUnit = currency === 'usd' ? Math.round(Number(amount) * 100) : Math.round(Number(amount));
-        if (amountInSmallestUnit < 1) throwError('Số tiền không hợp lệ');
-
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: amountInSmallestUnit,
-            currency: currency.toLowerCase(),
-            automatic_payment_methods: { enabled: true },
-            metadata: { orderId: orderId.toString() },
-        });
-
-        await orderModel.findByIdAndUpdate(orderId, {
-            stripePaymentIntentId: paymentIntent.id,
-        });
-
-        return {
-            clientSecret: paymentIntent.client_secret,
-            paymentIntentId: paymentIntent.id,
-        };
-    }
-
-    async handleStripeWebhook(paymentIntentId) {
-        const order = await orderModel.findOne({ stripePaymentIntentId: paymentIntentId });
-        if (!order) return null;
-        if (order.paymentStatus === EPaymentStatus.PAID) return order;
-        order.paymentStatus = EPaymentStatus.PAID;
-        await order.save();
-        return order;
     }
 
     async getOrderById(orderId) {
