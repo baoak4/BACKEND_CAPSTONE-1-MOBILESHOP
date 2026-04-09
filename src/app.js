@@ -14,6 +14,7 @@ const contentRoutes = require('./routes/content.routes');
 const orderRoutes = require('./routes/order.routes');
 const configRoutes = require('./routes/config.routes');
 const statsRoutes = require('./routes/stats.routes');
+const chatBotRoutes = require('./routes/chatBot.routes');
 
 //middleware for handling errors
 
@@ -61,6 +62,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/config', configRoutes);
 
 app.use('/api/stats', statsRoutes);
+
+app.use('/api/chatbot', chatBotRoutes);
 
 app.use(errorHandler);
 

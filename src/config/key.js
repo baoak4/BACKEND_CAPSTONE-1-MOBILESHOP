@@ -8,6 +8,8 @@ const KEY = {
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || 'ZLQkvDyyA_bI8kazbqUvQp_fcnU',
     STRIPE_PRIVATE_KEY: process.env.STRIPE_PRIVATE_KEY,
     STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || '',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+    OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-5-nano',
 };
 
 module.exports = KEY;
