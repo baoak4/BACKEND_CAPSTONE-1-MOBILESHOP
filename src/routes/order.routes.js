@@ -6,8 +6,7 @@ const authMiddleware = require('../middlewares/auth.middlewars');
 const authorizeRoles = require('../middlewares/authorize.middleware');
 const router = express.Router();
 
-// router.use(authMiddleware);
-// router.use(authorizeRoles('user', 'admin', 'shop'));
+router.use(authMiddleware);
 
 router.post(
     '/create',
@@ -42,6 +41,15 @@ router.get(
     // orderValidator.getOrdersByUserIdValidator,
     validate,
     orderController.getOrdersByUserId
+);
+
+router.use(authorizeRoles('shop'));
+
+router.get(
+    '/getAllOrders',
+    orderValidator.getAllOrdersValidator,
+    validate,
+    orderController.getAllOrders
 );
 
 router.put(

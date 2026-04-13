@@ -77,6 +77,21 @@ class OrderController {
         }
     }
 
+    async getAllOrders(req, res, next) {
+        try {
+            const { page, limit } = req.query;
+            const shopUserId = req.user.userId;
+            const result = await orderService.getAllOrders({ page, limit, shopUserId });
+            return res.status(200).json({
+                message: 'Get all orders successfully',
+                data: result.data,
+                pagination: result.pagination,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getOrderById(req, res, next) {
         try {
             const { orderId } = req.params;

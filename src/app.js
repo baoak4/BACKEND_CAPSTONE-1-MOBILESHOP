@@ -6,7 +6,7 @@ const cors = require('cors');
 //import routes
 const authRoutes = require('./routes/auth.routes');
 const uploadRoutes = require('./routes/upload.routes');
-const categoryRoutes = require('./routes/category.routes');
+const categoryRoutes = require('./routes/category.routes');//danh mục
 const productRoutes = require('./routes/product.routes');
 const reviewRoutes = require('./routes/review.routes');
 const cartRoutes = require('./routes/cart.routes');
@@ -59,11 +59,11 @@ app.use('/api/contents', contentRoutes);
 
 app.use('/api/orders', orderRoutes);
 
-app.use('/api/config', configRoutes);
-
-app.use('/api/stats', statsRoutes);
+app.use('/api/stats', statsRoutes); // thống kê
 
 app.use('/api/chatbot', chatBotRoutes);
+
+app.use('/api/config', configRoutes);
 
 app.use(errorHandler);
 

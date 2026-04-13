@@ -51,6 +51,11 @@ class OrderValidator {
             .withMessage('paymentIntentId không hợp lệ'),
     ];
 
+    getAllOrdersValidator = [
+        query('page').optional().isInt({ min: 1 }).withMessage('page >= 1'),
+        query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('limit must be between 1 and 100'),
+    ];
+
     getOrderByIdValidator = [
         param('orderId')
             .notEmpty().withMessage('orderId là bắt buộc')
