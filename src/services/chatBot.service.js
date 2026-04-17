@@ -1,5 +1,4 @@
-const { getOpenAIClient, openAiModel } = require("../utils/open_ai");
-const { SYSTEM_PROMPT } = require("../utils/prompt");
+const { getGeminiModel } = require("../utils/gemini");
 const productModel = require("../models/product.model");
 
 function escapeRegex(s) {
@@ -88,25 +87,17 @@ function normalizeAnalysis(parsed) {
 
 const chatBotService = {
     async analyzeQuery(userMessage) {
-        const openai = getOpenAIClient();
-        if (!openai) {
-            const err = new Error("OPENAI_API_KEY chưa được cấu hình");
+        const model = getGeminiModel();
+        if (!model) {
+            const err = new Error("GEMINI_API_KEY chưa được cấu hình");
             err.statusCode = 503;
             throw err;
         }
 
-        const completion = await openai.chat.completions.create({
-            model: openAiModel,
-            response_format: { type: "json_object" },
-            messages: [
-                { role: "system", content: SYSTEM_PROMPT },
-                { role: "user", content: userMessage },
-            ],
-        });
-
-        const raw = completion.choices[0]?.message?.content;
-        if (!raw) {
-            throw new Error("Empty response from OpenAI");
+        const result = await model.generateContent(userMessage);
+        const raw = result.response.text();
+        if (!raw || !String(raw).trim()) {
+            throw new Error("Empty response from Gemini");
         }
 
         let cleaned = raw.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -208,7 +199,7 @@ const chatBotService = {
     },
 
     /**
-     * Nội dung hiển thị trước khi người dùng gửi tin (không gọi OpenAI).
+     * Nội dung hiển thị trước khi người dùng gửi tin (không gọi Gemini).
      */
     getBootstrap() {
         return {
