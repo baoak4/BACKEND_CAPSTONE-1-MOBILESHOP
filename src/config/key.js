@@ -11,7 +11,7 @@ const KEY = {
     STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY || '',
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
     OPENAI_MODEL: process.env.OPENAI_MODEL || 'gpt-5-nano',
-    GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY || 'AIzaSyASlHr5vQOpSg5BHrCVkEkSY2TXul03JuE',
     GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
 };
 
