@@ -25,3 +25,13 @@ async function createReview(productId) {
         console.error("CREATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ALL REVIEWS =====
+async function getAllReviews() {
+    try {
+        const res = await axios.get(BASE_URL);
+        console.log("ALL REVIEWS:", res.data);
+    } catch (err) {
+        console.error("GET ALL ERROR:", err.response?.data || err.message);
+    }
+}
