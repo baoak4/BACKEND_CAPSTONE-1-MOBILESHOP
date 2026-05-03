@@ -38,4 +38,16 @@ async function getCategoryById(id) {
     }
 }
 
+// ===== UPDATE CATEGORY =====
+async function updateCategory(id) {
+    try {
+        const res = await axios.put(`${BASE_URL}/${id}`, {
+            name: "Smartphone Updated",
+            slug: "smartphone"
+        });
 
+        console.log("UPDATE CATEGORY:", res.data);
+    } catch (err) {
+        console.error("UPDATE ERROR:", err.response?.data || err.message);
+    }
+}
