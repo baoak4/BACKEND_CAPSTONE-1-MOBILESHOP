@@ -1,0 +1,20 @@
+import axios from "axios";
+
+const BASE_URL = "http://localhost:3000/api/contents";
+
+// ===== CREATE CONTENT =====
+async function createContent() {
+    try {
+        const res = await axios.post(BASE_URL, {
+            title: "iPhone 15 Pro Review",
+            short: "Review ngắn iPhone 15 Pro",
+            full: "Bài review chi tiết về hiệu năng, camera, pin và trải nghiệm thực tế của iPhone 15 Pro.",
+            type: "product-description"
+        });
+
+        console.log("CREATE CONTENT:", res.data);
+        return res.data._id;
+    } catch (err) {
+        console.error("CREATE ERROR:", err.response?.data || err.message);
+    }
+}
