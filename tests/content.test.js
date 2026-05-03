@@ -18,3 +18,13 @@ async function createContent() {
         console.error("CREATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ALL CONTENT =====
+async function getAllContents() {
+    try {
+        const res = await axios.get(BASE_URL);
+        console.log("ALL CONTENTS:", res.data);
+    } catch (err) {
+        console.error("GET ALL ERROR:", err.response?.data || err.message);
+    }
+}
