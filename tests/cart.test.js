@@ -30,3 +30,15 @@ async function getCartByUser(userId) {
     }
 }
 
+// ===== UPDATE CART ITEM =====
+async function updateCartItem(cartItemId) {
+    try {
+        const res = await axios.put(`${BASE_URL}/${cartItemId}`, {
+            quantity: 3
+        });
+
+        console.log("UPDATE CART:", res.data);
+    } catch (err) {
+        console.error("UPDATE ERROR:", err.response?.data || err.message);
+    }
+}
