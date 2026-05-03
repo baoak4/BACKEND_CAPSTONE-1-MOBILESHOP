@@ -54,3 +54,13 @@ async function updateContent(id) {
         console.error("UPDATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== DELETE CONTENT =====
+async function deleteContent(id) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/${id}`);
+        console.log("DELETE CONTENT:", res.data);
+    } catch (err) {
+        console.error("DELETE ERROR:", err.response?.data || err.message);
+    }
+}
