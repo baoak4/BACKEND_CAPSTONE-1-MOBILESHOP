@@ -33,3 +33,13 @@ async function createOrder(productId) {
         console.error("CREATE ORDER ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ALL ORDERS =====
+async function getAllOrders() {
+    try {
+        const res = await axios.get(BASE_URL);
+        console.log("ALL ORDERS:", res.data);
+    } catch (err) {
+        console.error("GET ALL ERROR:", err.response?.data || err.message);
+    }
+}
