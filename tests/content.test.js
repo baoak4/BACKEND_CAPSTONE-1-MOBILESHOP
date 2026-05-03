@@ -28,3 +28,13 @@ async function getAllContents() {
         console.error("GET ALL ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ONE CONTENT =====
+async function getContentById(id) {
+    try {
+        const res = await axios.get(`${BASE_URL}/${id}`);
+        console.log("CONTENT DETAIL:", res.data);
+    } catch (err) {
+        console.error("GET ONE ERROR:", err.response?.data || err.message);
+    }
+}
