@@ -38,3 +38,19 @@ async function getContentById(id) {
         console.error("GET ONE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== UPDATE CONTENT =====
+async function updateContent(id) {
+    try {
+        const res = await axios.put(`${BASE_URL}/${id}`, {
+            title: "iPhone 15 Pro Max Review",
+            short: "Review updated",
+            full: "Nội dung review đã được cập nhật với thông tin mới nhất về iPhone 15 Pro Max.",
+            type: "product-description"
+        });
+
+        console.log("UPDATE CONTENT:", res.data);
+    } catch (err) {
+        console.error("UPDATE ERROR:", err.response?.data || err.message);
+    }
+}
