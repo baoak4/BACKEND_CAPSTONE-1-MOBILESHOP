@@ -27,3 +27,13 @@ async function getAllCategories() {
         console.error("GET CATEGORY ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ONE CATEGORY =====
+async function getCategoryById(id) {
+    try {
+        const res = await axios.get(`${BASE_URL}/${id}`);
+        console.log("CATEGORY DETAIL:", res.data);
+    } catch (err) {
+        console.error("GET ONE CATEGORY ERROR:", err.response?.data || err.message);
+    }
+}
