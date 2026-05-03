@@ -42,3 +42,13 @@ async function updateCartItem(cartItemId) {
         console.error("UPDATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== REMOVE ITEM FROM CART =====
+async function removeFromCart(cartItemId) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/${cartItemId}`);
+        console.log("REMOVE ITEM:", res.data);
+    } catch (err) {
+        console.error("REMOVE ERROR:", err.response?.data || err.message);
+    }
+}
