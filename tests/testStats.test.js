@@ -21,4 +21,13 @@ async function getSalesByDate() {
         console.error("SALES ERROR:", err.response?.data || err.message);
     }
 }
-    
+
+async function getTopProducts() {
+    try {
+        const res = await axios.get(`${BASE_URL}/top-products`);
+
+        console.log("TOP PRODUCTS:", res.data);
+    } catch (err) {
+        console.error("TOP PRODUCTS ERROR:", err.response?.data || err.message);
+    }
+}
