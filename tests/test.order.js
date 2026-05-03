@@ -76,3 +76,21 @@ async function deleteOrder(id) {
         console.error("DELETE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN FLOW =====
+async function run() {
+    // giả lập productId
+    const productId = "product_001";
+
+    const orderId = await createOrder(productId);
+
+    await getAllOrders();
+
+    if (orderId) {
+        await getOrderById(orderId);
+        await updateOrder(orderId);
+        await deleteOrder(orderId);
+    }
+}
+
+run();
