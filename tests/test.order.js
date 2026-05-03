@@ -43,3 +43,13 @@ async function getAllOrders() {
         console.error("GET ALL ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ONE ORDER =====
+async function getOrderById(id) {
+    try {
+        const res = await axios.get(`${BASE_URL}/${id}`);
+        console.log("ORDER DETAIL:", res.data);
+    } catch (err) {
+        console.error("GET ONE ERROR:", err.response?.data || err.message);
+    }
+}
