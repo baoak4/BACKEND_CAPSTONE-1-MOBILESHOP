@@ -108,3 +108,12 @@ async function updateReview(id) {
     }
 }
 
+// ===== DELETE REVIEW =====
+async function deleteReview(id) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/${id}`);
+        console.log("DELETE REVIEW:", res.data);
+    } catch (err) {
+        console.error("DELETE ERROR:", err.response?.data || err.message);
+    }
+}
