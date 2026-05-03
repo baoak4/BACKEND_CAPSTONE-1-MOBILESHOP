@@ -64,3 +64,18 @@ async function deleteContent(id) {
         console.error("DELETE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN TEST FLOW =====
+async function run() {
+    const id = await createContent();
+
+    await getAllContents();
+
+    if (id) {
+        await getContentById(id);
+        await updateContent(id);
+        await deleteContent(id);
+    }
+}
+
+run();
