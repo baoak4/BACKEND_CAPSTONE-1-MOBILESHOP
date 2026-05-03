@@ -51,3 +51,13 @@ async function updateCategory(id) {
         console.error("UPDATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== DELETE CATEGORY =====
+async function deleteCategory(id) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/${id}`);
+        console.log("DELETE CATEGORY:", res.data);
+    } catch (err) {
+        console.error("DELETE ERROR:", err.response?.data || err.message);
+    }
+}
