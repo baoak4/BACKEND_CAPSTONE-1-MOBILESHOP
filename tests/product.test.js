@@ -52,3 +52,13 @@ async function updateProduct(id) {
         console.error("UPDATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ====== DELETE PRODUCT ======
+async function deleteProduct(id) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/${id}`);
+        console.log("DELETE SUCCESS:", res.data);
+    } catch (err) {
+        console.error("DELETE ERROR:", err.response?.data || err.message);
+    }
+}
