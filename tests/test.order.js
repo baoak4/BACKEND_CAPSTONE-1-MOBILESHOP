@@ -66,3 +66,13 @@ async function updateOrder(id) {
         console.error("UPDATE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== DELETE ORDER =====
+async function deleteOrder(id) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/${id}`);
+        console.log("DELETE ORDER:", res.data);
+    } catch (err) {
+        console.error("DELETE ERROR:", err.response?.data || err.message);
+    }
+}
