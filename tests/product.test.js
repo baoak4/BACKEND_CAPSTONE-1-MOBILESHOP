@@ -18,3 +18,12 @@ async function createProduct() {
         console.error("CREATE ERROR:", err.response?.data || err.message);
     }
 }
+
+async function getAllProducts() {
+    try {
+        const res = await axios.get(BASE_URL);
+        console.log("GET ALL:", res.data);
+    } catch (err) {
+        console.error("GET ALL ERROR:", err.response?.data || err.message);
+    }
+}
