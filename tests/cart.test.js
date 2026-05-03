@@ -52,3 +52,13 @@ async function removeFromCart(cartItemId) {
         console.error("REMOVE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== CLEAR CART =====
+async function clearCart(userId) {
+    try {
+        const res = await axios.delete(`${BASE_URL}/clear/${userId}`);
+        console.log("CLEAR CART:", res.data);
+    } catch (err) {
+        console.error("CLEAR ERROR:", err.response?.data || err.message);
+    }
+}
