@@ -37,3 +37,18 @@ async function getProductById(id) {
         console.error("GET ONE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ====== UPDATE PRODUCT ======
+async function updateProduct(id) {
+    try {
+        const res = await axios.put(`${BASE_URL}/${id}`, {
+            name: "iPhone 15 Pro Max",
+            price: 1400,
+            stock: 5
+        });
+
+        console.log("UPDATE SUCCESS:", res.data);
+    } catch (err) {
+        console.error("UPDATE ERROR:", err.response?.data || err.message);
+    }
+}
