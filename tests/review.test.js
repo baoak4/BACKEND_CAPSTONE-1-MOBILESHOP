@@ -35,3 +35,15 @@ async function getAllReviews() {
         console.error("GET ALL ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET REVIEWS BY PRODUCT =====
+async function getReviewsByProduct(productId) {
+    try {
+        const res = await axios.get(`${BASE_URL}?productId=${productId}`);
+        console.log("REVIEWS BY PRODUCT:", res.data);
+    } catch (err) {
+        console.error("GET BY PRODUCT ERROR:", err.response?.data || err.message);
+    }
+}
+
+
