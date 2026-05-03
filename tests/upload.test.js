@@ -43,3 +43,11 @@ async function uploadMultiple() {
         console.error("UPLOAD MULTI ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN =====
+async function run() {
+    await uploadImage();
+    await uploadMultiple();
+}
+
+run();
