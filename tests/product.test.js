@@ -27,3 +27,13 @@ async function getAllProducts() {
         console.error("GET ALL ERROR:", err.response?.data || err.message);
     }
 }
+
+// ====== GET ONE PRODUCT ======
+async function getProductById(id) {
+    try {
+        const res = await axios.get(`${BASE_URL}/${id}`);
+        console.log("GET ONE:", res.data);
+    } catch (err) {
+        console.error("GET ONE ERROR:", err.response?.data || err.message);
+    }
+}
