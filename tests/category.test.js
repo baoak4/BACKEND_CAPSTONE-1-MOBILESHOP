@@ -17,3 +17,13 @@ async function createCategory() {
         console.error("CREATE CATEGORY ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET ALL CATEGORIES =====
+async function getAllCategories() {
+    try {
+        const res = await axios.get(BASE_URL);
+        console.log("ALL CATEGORIES:", res.data);
+    } catch (err) {
+        console.error("GET CATEGORY ERROR:", err.response?.data || err.message);
+    }
+}
