@@ -62,3 +62,22 @@ async function clearCart(userId) {
         console.error("CLEAR ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN FLOW =====
+async function run() {
+    const productId = "product_001";
+    const userId = "user_001";
+
+    const cartItemId = await addToCart(productId);
+
+    await getCartByUser(userId);
+
+    if (cartItemId) {
+        await updateCartItem(cartItemId);
+        await removeFromCart(cartItemId);
+    }
+
+    await clearCart(userId);
+}
+
+run();
