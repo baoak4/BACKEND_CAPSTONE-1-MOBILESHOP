@@ -53,3 +53,16 @@ async function getOrderById(id) {
         console.error("GET ONE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== UPDATE ORDER STATUS =====
+async function updateOrder(id) {
+    try {
+        const res = await axios.put(`${BASE_URL}/${id}`, {
+            status: "shipped"
+        });
+
+        console.log("UPDATE ORDER:", res.data);
+    } catch (err) {
+        console.error("UPDATE ERROR:", err.response?.data || err.message);
+    }
+}
