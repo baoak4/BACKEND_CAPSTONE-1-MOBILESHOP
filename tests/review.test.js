@@ -117,3 +117,21 @@ async function deleteReview(id) {
         console.error("DELETE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN FLOW =====
+async function run() {
+    const productId = "product_001";
+
+    const reviewId = await createReview(productId);
+
+    await getAllReviews();
+
+    await getReviewsByProduct(productId);
+
+    if (reviewId) {
+        await updateReview(reviewId);
+        await deleteReview(reviewId);
+    }
+}
+
+run();
