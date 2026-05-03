@@ -62,3 +62,18 @@ async function deleteProduct(id) {
         console.error("DELETE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ====== RUN TEST FLOW ======
+async function runTest() {
+    const id = await createProduct();
+
+    await getAllProducts();
+
+    if (id) {
+        await getProductById(id);
+        await updateProduct(id);
+        await deleteProduct(id);
+    }
+}
+
+runTest();
