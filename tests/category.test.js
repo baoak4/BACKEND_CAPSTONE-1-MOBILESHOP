@@ -61,3 +61,18 @@ async function deleteCategory(id) {
         console.error("DELETE ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN =====
+async function run() {
+    const id = await createCategory();
+
+    await getAllCategories();
+
+    if (id) {
+        await getCategoryById(id);
+        await updateCategory(id);
+        await deleteCategory(id);
+    }
+}
+
+run();
