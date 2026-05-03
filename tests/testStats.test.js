@@ -10,3 +10,15 @@ async function getDashboardStats() {
         console.error("STATS ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET SALES BY DATE =====
+async function getSalesByDate() {
+    try {
+        const res = await axios.get(`${BASE_URL}/sales?range=7d`);
+
+        console.log("SALES BY DATE:", res.data);
+    } catch (err) {
+        console.error("SALES ERROR:", err.response?.data || err.message);
+    }
+}
+    
