@@ -37,3 +37,5 @@ async function getCategoryById(id) {
         console.error("GET ONE CATEGORY ERROR:", err.response?.data || err.message);
     }
 }
+
+
