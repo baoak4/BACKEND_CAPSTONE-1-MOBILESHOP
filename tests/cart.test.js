@@ -19,3 +19,14 @@ async function addToCart(productId) {
         console.error("ADD ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== GET CART BY USER =====
+async function getCartByUser(userId) {
+    try {
+        const res = await axios.get(`${BASE_URL}/${userId}`);
+        console.log("CART DETAIL:", res.data);
+    } catch (err) {
+        console.error("GET CART ERROR:", err.response?.data || err.message);
+    }
+}
+
