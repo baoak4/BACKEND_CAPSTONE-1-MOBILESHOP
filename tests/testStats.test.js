@@ -31,3 +31,12 @@ async function getTopProducts() {
         console.error("TOP PRODUCTS ERROR:", err.response?.data || err.message);
     }
 }
+
+// ===== RUN =====
+async function run() {
+    await getDashboardStats();
+    await getSalesByDate();
+    await getTopProducts();
+}
+
+run();
