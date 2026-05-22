@@ -1,0 +1,56 @@
+[33mc0476ad[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m doc
+[33me10147f[m doc
+[33m498c644[m feat(upload): complete file upload test module
+[33m3565a9b[m feat(upload): add single image upload API test
+[33ma9394fd[m init: create upload test module
+[33m6f853f7[m feat(stats): complete stats API test module
+[33m94a01ab[m feat(stats): add top products ranking test
+[33m280c0f4[m feat(stats): add sales by date analytics test
+[33m224e980[m feat(stats): add dashboard statistics API test
+[33mcefb611[m init: create stats test module
+[33m741ec93[m make : run cart.test
+[33m28ce0d1[m feat : clearCart
+[33mb08d203[m make removeFromCart
+[33m42deaa1[m feat : updatCartItem
+[33mb227992[m update : getCartByUser
+[33m221aa9e[m make : addTocart
+[33mede1110[m make run test review
+[33m1c0e76d[m feat : deleteReview
+[33m1514eca[m make updateReview
+[33mda1ff6a[m add getReviewsByProduct
+[33m6951ee9[m add getAllReviews
+[33m7b21989[m add createReview
+[33m0b934d0[m add run test order
+[33m7e06fa0[m feat : add deleteaOrder
+[33m058d2fb[m feat : add updateOrder
+[33mea33579[m feat : add getOrderById
+[33me90dc80[m feat : add getAllOrders
+[33m09b53b8[m feat : add createOrder
+[33mfe49ec3[m feat : add run Content
+[33m905bf58[m feat : deleteContent (id)
+[33mc84c215[m feat : add updateContent
+[33mf8de56e[m feat : add getContentById
+[33m9a39792[m feat : add getAllContents
+[33m3a9a4f7[m feat : createContent
+[33md8252b7[m feat : run
+[33m2f5dc6d[m feat : add deleteCategory(Id)
+[33m6a31f1a[m feat : add updateCategory
+[33m037a53e[m feat : add updateCategory
+[33m2167de4[m feat : add getCategoryById
+[33m1aca857[m feat : add getAllCategories
+[33m85c3256[m feat : creatCategory
+[33mdc03c68[m feat : add runTest
+[33mb5a152a[m feat : add deleteProduct(id)
+[33m066183d[m feat : add updateProduct(id)
+[33m07031e2[m feat : test getProductById
+[33maaa1137[m feat (add getAllProducts)
+[33m1967521[m add: test product create
+[33m915da62[m test(auth) : add
+[33mcdbbaad[m feat(AI)
+[33m84751f1[m feat: integrate Google Gemini chatbot functionality
+[33mcea269b[m feat: implement order management features and add API documentation
+[33m486314a[m feat: integrate OpenAI API and add chatbot routes
+[33m581ff7d[m feat: add stats routes to the application
+[33m06e8658[m feat: add Stripe payment integration and webhook handling
+[33m61fb602[m refactor: remove Stripe secret from source
+[33md1c2b25[m first clean commit
